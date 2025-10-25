@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import usuariosEjemplo from "../utils/usuariosEjemplo";
+import productosData from "../utils/productosData";
+import { getBoletas } from "../utils/boletasData";
 
 function formatCurrency(n) {
   if (n == null) return "$0";
@@ -41,6 +43,7 @@ export default function Reportes() {
   const [endDate, setEndDate] = useState("");
 
   useEffect(() => {
+    // Usuarios: localStorage "users" / "usuarios" o fallback usuariosEjemplo
     try {
       const rawUsers = localStorage.getItem("users") || localStorage.getItem("usuarios");
       if (rawUsers) setUsuarios(JSON.parse(rawUsers));
@@ -49,16 +52,18 @@ export default function Reportes() {
       setUsuarios(usuariosEjemplo || []);
     }
 
+    // Productos: localStorage "productos" o fallback productosData
     try {
       const rawP = localStorage.getItem("productos") || localStorage.getItem("productos-admin");
-      setProductos(rawP ? JSON.parse(rawP) : []);
+      setProductos(rawP ? JSON.parse(rawP) : productosData || []);
     } catch {
-      setProductos([]);
+      setProductos(productosData || []);
     }
 
+    // Boletas: usar helper getBoletas (que revisa localStorage) o fallback
     try {
-      const rawB = localStorage.getItem("boletas") || localStorage.getItem("ordenes") || localStorage.getItem("ventas");
-      setBoletas(rawB ? JSON.parse(rawB) : []);
+      const b = getBoletas();
+      setBoletas(b || []);
     } catch {
       setBoletas([]);
     }
@@ -80,14 +85,29 @@ export default function Reportes() {
   const totalVentas = ventasFiltradas.reduce((s, b) => s + (b.total || b.monto || 0), 0);
   const cantidadVentas = ventasFiltradas.length;
 
+  function getClienteNombre(b) {
+    if (!b) return "";
+    if (typeof b.cliente === "string") return b.cliente;
+    if (b.cliente && (b.cliente.nombre || b.cliente.apellido)) {
+      return `${b.cliente.nombre || ""} ${b.cliente.apellido || ""}`.trim();
+    }
+    return b.nombre || b.usuario || "";
+  }
+
   function exportVentasCsv() {
     const headers = ["id", "cliente", "email_cliente", "total", "fecha", "items"];
     const rows = [headers];
     ventasFiltradas.forEach((b) => {
-      const items = (b.items || b.detalle || b.productos || [])
-        .map((it) => (it.titulo || it.nombre || it.title ? `${it.titulo || it.nombre || it.title} x${it.cantidad || 1}` : JSON.stringify(it)))
+      const itemsArr = b.productos || b.items || b.detalle || [];
+      const items = itemsArr
+        .map((it) => (it.titulo || it.nombre || it.title ? `${it.titulo || it.nombre || it.title} x${it.cantidad || it.qty || 1}` : JSON.stringify(it)))
         .join(" | ");
-      rows.push([b.id || "", b.cliente || b.nombre || b.usuario || "", b.email || "", b.total || b.monto || "", b.fecha || "", items]);
+      const email =
+        (b.cliente && (b.cliente.correo || b.cliente.email)) ||
+        b.email ||
+        (b.cliente && b.cliente.correo) ||
+        "";
+      rows.push([b.id || "", getClienteNombre(b), email, b.total || b.monto || "", b.fecha || "", items]);
     });
     download(`reportes_ventas_${new Date().toISOString().slice(0, 10)}.csv`, toCsv(rows));
   }
@@ -96,7 +116,13 @@ export default function Reportes() {
     const headers = ["id", "titulo", "descripcion", "precio", "categoria", "stock"];
     const rows = [headers];
     productos.forEach((p) => {
-      rows.push([p.id || "", p.titulo || p.nombre || p.name || "", p.descripcion || p.desc || "", p.price || p.precio || "", p.categoria || p.category || "", p.stock ?? p.cantidad ?? ""]);
+      rows.push([
+        p.id ?? "",
+        p.title || p.titulo || p.nombre || p.name || "",
+        p.description || p.descripcion || p.desc || "",
+        p.price || p.precio || p.price || "",
+        p.qty ?? p.stock ?? p.cantidad ?? "",
+      ]);
     });
     download(`reportes_productos_${new Date().toISOString().slice(0, 10)}.csv`, toCsv(rows));
   }
@@ -107,7 +133,7 @@ export default function Reportes() {
     usuarios.forEach((u) => {
       const compras = u.compras || u.ordenes || u.pedidos || [];
       const total = compras.reduce((s, c) => s + (c.price || c.total || c.monto || 0), 0);
-      rows.push([u.id || "", u.nombre || u.name || "", u.email || "", u.telefono || u.phone || "", u.region || "", u.comuna || "", compras.length, total]);
+      rows.push([u.id || "", u.nombre || u.name || "", u.email || u.correo || "", u.telefono || u.phone || "", u.region || "", u.comuna || "", compras.length, total]);
     });
     download(`reportes_usuarios_${new Date().toISOString().slice(0, 10)}.csv`, toCsv(rows));
   }
@@ -156,11 +182,11 @@ export default function Reportes() {
                 {ventasFiltradas.map((b) => (
                   <tr key={b.id || Math.random()}>
                     <td style={{ padding: "6px 0" }}>{b.id}</td>
-                    <td style={{ padding: "6px 0" }}>{b.cliente || b.nombre || b.usuario || ""}</td>
+                    <td style={{ padding: "6px 0" }}>{getClienteNombre(b)}</td>
                     <td style={{ padding: "6px 0" }}>{formatCurrency(b.total || b.monto || 0)}</td>
                     <td style={{ padding: "6px 0" }}>{b.fecha}</td>
                     <td style={{ padding: "6px 0" }}>
-                      {(b.items || b.productos || b.detalle || []).map((it) => it.titulo || it.nombre || it.title || "").join(", ")}
+                      {(b.productos || b.items || b.detalle || []).map((it) => it.titulo || it.nombre || it.title || "").join(", ")}
                     </td>
                   </tr>
                 ))}
@@ -195,10 +221,10 @@ export default function Reportes() {
                 {productos.map((p) => (
                   <tr key={p.id || Math.random()}>
                     <td style={{ padding: "6px 0" }}>{p.id}</td>
-                    <td style={{ padding: "6px 0" }}>{p.titulo || p.nombre || p.name}</td>
+                    <td style={{ padding: "6px 0" }}>{p.title || p.titulo || p.nombre || p.name}</td>
                     <td style={{ padding: "6px 0" }}>{formatCurrency(p.price || p.precio)}</td>
-                    <td style={{ padding: "6px 0" }}>{p.categoria || p.category}</td>
-                    <td style={{ padding: "6px 0" }}>{p.stock ?? p.cantidad ?? ""}</td>
+                    <td style={{ padding: "6px 0" }}>{p.categoria || p.category || p.categoriaId}</td>
+                    <td style={{ padding: "6px 0" }}>{p.qty ?? p.stock ?? p.cantidad ?? ""}</td>
                   </tr>
                 ))}
                 {productos.length === 0 && (
@@ -236,7 +262,7 @@ export default function Reportes() {
                     <tr key={u.id || Math.random()}>
                       <td style={{ padding: "6px 0" }}>{u.id}</td>
                       <td style={{ padding: "6px 0" }}>{u.nombre || u.name}</td>
-                      <td style={{ padding: "6px 0" }}>{u.email}</td>
+                      <td style={{ padding: "6px 0" }}>{u.email || u.correo}</td>
                       <td style={{ padding: "6px 0" }}>{compras.length}</td>
                       <td style={{ padding: "6px 0" }}>{formatCurrency(total)}</td>
                     </tr>

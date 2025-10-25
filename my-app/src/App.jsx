@@ -17,6 +17,7 @@ import Usuarios from './admin/usuarios';
 import ProductosAdmin from "./admin/ProductosAdmin.jsx";
 import CategoriasAdmin from "./admin/CategoriasAdmin.jsx";
 import OrdenesAdmin from "./admin/OrdenesAdmin.jsx"; 
+import Reportes from "./admin/reportes";
 
 export default function App() {
 	const location = useLocation();
@@ -49,6 +50,7 @@ export default function App() {
 			<Route path="/productos-admin" element={<AdminLayout><ProductosAdmin /></AdminLayout>} />
 			<Route path="/categorias-admin" element={<AdminLayout><CategoriasAdmin /></AdminLayout>}/>
 			<Route path="/ordenes-admin" element={<AdminLayout><OrdenesAdmin /></AdminLayout>}/> {/* <-- Nueva ruta */}
+			<Route path="/reportes" element={<AdminLayout><Reportes /></AdminLayout>} />
 
 			<Route path="*" element={<MainLayout><h2>404: Página no encontrada</h2></MainLayout>} />
 		</Routes>

@@ -31,12 +31,10 @@ export default function CategoriasAdmin() {
 
     cargarCategorias();
 
-    // Escucha cambios en localStorage desde otra pestaña
-    window.addEventListener("storage", cargarCategorias);
+  window.addEventListener("storage", cargarCategorias);
     return () => window.removeEventListener("storage", cargarCategorias);
   }, []);
 
-  // Guardar categorías cada vez que cambian
   useEffect(() => {
     localStorage.setItem("app_categorias", JSON.stringify(categorias));
   }, [categorias]);
@@ -52,7 +50,6 @@ export default function CategoriasAdmin() {
     resetForm();
     setShowCreate(false);
 
-    // Disparar evento storage manual para notificar a otras pestañas
     localStorage.setItem("app_categorias_update", Date.now());
   };
 
@@ -113,7 +110,6 @@ export default function CategoriasAdmin() {
         </tbody>
       </table>
 
-      {/* Modal Crear */}
       {showCreate && (
         <ModalCategoria
           title="Nueva Categoría"
@@ -124,7 +120,6 @@ export default function CategoriasAdmin() {
         />
       )}
 
-      {/* Modal Editar */}
       {showEdit && selected && (
         <ModalCategoria
           title="Editar Categoría"
@@ -138,7 +133,6 @@ export default function CategoriasAdmin() {
   );
 }
 
-// Modal genérico para categoría
 function ModalCategoria({ title, form, setForm, onClose, onSubmit }) {
   return (
     <>

@@ -15,6 +15,9 @@ const HeaderAdmin = () => (
       Panel de Administración
     </h2>
     <nav>
+      <Link to="/dashboard" style={{ color: "white",marginRight: "15px", textDecoration: "none" }}>
+        Dashboard    
+      </Link>
       <Link to="/usuarios" style={{ color: "white", marginRight: "15px", textDecoration: "none" }}>
         Usuarios
       </Link>

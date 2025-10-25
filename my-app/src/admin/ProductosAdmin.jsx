@@ -32,7 +32,7 @@ export default function ProductosAdmin() {
     category: "",
   });
 
-  // Cargar productos y categorías
+  // Cargar productos
   useEffect(() => {
     const rawProducts = localStorage.getItem("app_products");
     if (rawProducts) {
@@ -130,8 +130,7 @@ export default function ProductosAdmin() {
   const totalProductos = productos.length;
   const totalStock = productos.reduce((sum, p) => sum + (p.qty || 0), 0);
   const valorInventario = productos.reduce(
-    (sum, p) => sum + p.price * (p.qty || 0),
-    0
+    (sum, p) => sum + p.price * (p.qty || 0),0
   );
   const topCaros = [...productos].sort((a, b) => b.price - a.price).slice(0, 5);
   const topBaratos = [...productos].sort((a, b) => a.price - b.price).slice(0, 5);

@@ -19,6 +19,9 @@ const HeaderAdmin = () => (
       <Link to="/productos-admin" style={{ color: "white", marginRight: "15px", textDecoration: "none" }}>
         Productos
       </Link>
+      <Link to="/categorias-admin" style={{ color: "white", marginRight: "15px", textDecoration: "none" }}>
+        Categorías
+      </Link>
       <Link to="/" style={{ color: "white", textDecoration: "none" }}>
         Volver al inicio
       </Link>
@@ -27,4 +30,5 @@ const HeaderAdmin = () => (
 );
 
 export default HeaderAdmin;
+
 

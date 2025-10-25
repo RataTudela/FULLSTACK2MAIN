@@ -16,6 +16,7 @@ const toBase64 = (file) =>
 
 export default function ProductosAdmin() {
   const [productos, setProductos] = useState([]);
+  const [categorias, setCategorias] = useState([]);
   const [showCreate, setShowCreate] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [showCritical, setShowCritical] = useState(false);
@@ -28,14 +29,15 @@ export default function ProductosAdmin() {
     price: "",
     image: "",
     qty: 0,
+    category: "",
   });
 
-  // Cargar productos
+  // Cargar productos y categorías
   useEffect(() => {
-    const raw = localStorage.getItem("app_products");
-    if (raw) {
+    const rawProducts = localStorage.getItem("app_products");
+    if (rawProducts) {
       try {
-        setProductos(JSON.parse(raw));
+        setProductos(JSON.parse(rawProducts));
       } catch {
         setProductos(productosBase);
         localStorage.setItem("app_products", JSON.stringify(productosBase));
@@ -44,6 +46,18 @@ export default function ProductosAdmin() {
       setProductos(productosBase);
       localStorage.setItem("app_products", JSON.stringify(productosBase));
     }
+
+    const rawCats = localStorage.getItem("app_categorias");
+    if (rawCats) {
+      try {
+        setCategorias(JSON.parse(rawCats));
+      } catch {
+        setCategorias([]);
+      }
+    } else {
+      setCategorias([]);
+    }
+
   }, []);
 
   useEffect(() => {
@@ -51,11 +65,11 @@ export default function ProductosAdmin() {
   }, [productos]);
 
   const resetForm = () =>
-    setForm({ title: "", description: "", price: "", image: "", qty: 0 });
+    setForm({ title: "", description: "", price: "", image: "", qty: 0, category: "" });
 
   const handleCreate = (e) => {
     e.preventDefault();
-    if (!form.title || !form.price) return;
+    if (!form.title || !form.price || !form.category) return;
 
     setProductos((s) => [
       {
@@ -78,6 +92,7 @@ export default function ProductosAdmin() {
       price: product.price,
       image: product.image,
       qty: product.qty || 0,
+      category: product.category || "",
     });
     setShowEdit(true);
   };
@@ -89,12 +104,7 @@ export default function ProductosAdmin() {
     setProductos((s) =>
       s.map((p) =>
         p.id === selected.id
-          ? {
-              ...p,
-              ...form,
-              price: Number(form.price),
-              qty: Number(form.qty),
-            }
+          ? { ...p, ...form, price: Number(form.price), qty: Number(form.qty) }
           : p
       )
     );
@@ -126,7 +136,6 @@ export default function ProductosAdmin() {
   const topCaros = [...productos].sort((a, b) => b.price - a.price).slice(0, 5);
   const topBaratos = [...productos].sort((a, b) => a.price - b.price).slice(0, 5);
 
-  // Funcion subir imagen
   const handleFileChange = async (file) => {
     if (file) {
       const base64 = await toBase64(file);
@@ -153,6 +162,7 @@ export default function ProductosAdmin() {
               <th>Imagen</th>
               <th>Título</th>
               <th>Descripción</th>
+              <th>Categoría</th>
               <th className="text-end">Precio</th>
               <th className="text-end">Cantidad</th>
               <th className="text-end">Acciones</th>
@@ -161,7 +171,7 @@ export default function ProductosAdmin() {
           <tbody>
             {productos.length === 0 && (
               <tr>
-                <td colSpan="6" className="text-center">No hay productos</td>
+                <td colSpan="7" className="text-center">No hay productos</td>
               </tr>
             )}
             {productos.map((p) => (
@@ -169,6 +179,7 @@ export default function ProductosAdmin() {
                 <td>{p.image && <img src={p.image} alt={p.title} style={{ width: 60, height: 60, objectFit: "cover" }} />}</td>
                 <td>{p.title}</td>
                 <td>{p.description}</td>
+                <td>{p.category || "-"}</td>
                 <td className="text-end">${p.price.toLocaleString("es-CL")}</td>
                 <td className="text-end">{p.qty || 0}</td>
                 <td className="text-end">
@@ -181,31 +192,30 @@ export default function ProductosAdmin() {
         </table>
       </div>
 
-      {/* Modal Crear */}
       {showCreate && (
         <ModalProducto
           title="Nuevo Producto"
           form={form}
           setForm={setForm}
+          categorias={categorias}
           onClose={() => { setShowCreate(false); resetForm(); }}
           onSubmit={handleCreate}
           handleFileChange={handleFileChange}
         />
       )}
 
-      {/* Modal Editar */}
       {showEdit && selected && (
         <ModalProducto
           title="Editar Producto"
           form={form}
           setForm={setForm}
+          categorias={categorias}
           onClose={() => { setShowEdit(false); setSelected(null); resetForm(); }}
           onSubmit={handleEdit}
           handleFileChange={handleFileChange}
         />
       )}
 
-      {/* Modal Productos Críticos */}
       {showCritical && (
         <ModalSimple title="Productos Críticos" onClose={() => setShowCritical(false)}>
           {productosCriticos.length === 0 ? <p>No hay productos críticos</p> : (
@@ -214,7 +224,6 @@ export default function ProductosAdmin() {
         </ModalSimple>
       )}
 
-      {/* Modal Reporte */}
       {showReport && (
         <ModalSimple title="Reporte de Inventario" onClose={() => setShowReport(false)}>
           <p><strong>Total de productos:</strong> {totalProductos}</p>
@@ -230,13 +239,13 @@ export default function ProductosAdmin() {
   );
 }
 
-// Modal para Crear/Editar
-function ModalProducto({ title, form, setForm, onClose, onSubmit, handleFileChange }) {
+// Modal Producto con scroll para pantallas pequeñas
+function ModalProducto({ title, form, setForm, categorias, onClose, onSubmit, handleFileChange }) {
   return (
     <>
       <div className="modal-backdrop fade show" />
       <div className="modal d-block" tabIndex="-1">
-        <div className="modal-dialog">
+        <div className="modal-dialog modal-dialog-scrollable">
           <form className="modal-content" onSubmit={onSubmit}>
             <div className="modal-header">
               <h5 className="modal-title">{title}</h5>
@@ -260,6 +269,20 @@ function ModalProducto({ title, form, setForm, onClose, onSubmit, handleFileChan
                 <input type="number" className="form-control" value={form.qty} onChange={(e) => setForm({ ...form, qty: e.target.value })} required />
               </div>
               <div className="mb-2">
+                <label className="form-label">Categoría</label>
+                <select
+                  className="form-select"
+                  value={form.category}
+                  onChange={(e) => setForm({ ...form, category: e.target.value })}
+                  required
+                >
+                  <option value="">Seleccione categoría</option>
+                  {categorias.map((cat) => (
+                    <option key={cat.id} value={cat.name}>{cat.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="mb-2">
                 <label className="form-label">Imagen</label>
                 <input type="file" className="form-control" accept="image/*" onChange={(e) => handleFileChange(e.target.files[0])} />
                 {form.image && <img src={form.image} alt="preview" style={{ width: 80, height: 80, marginTop: 5, objectFit: "cover" }} />}
@@ -276,7 +299,7 @@ function ModalProducto({ title, form, setForm, onClose, onSubmit, handleFileChan
   );
 }
 
-// Modal para reportes :v
+// Modal simple
 function ModalSimple({ title, onClose, children }) {
   return (
     <>
@@ -298,5 +321,6 @@ function ModalSimple({ title, onClose, children }) {
     </>
   );
 }
+
 
 

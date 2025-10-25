@@ -16,6 +16,7 @@ import Noticia2 from './noticia2.jsx';
 import Carrito from './Carrito.jsx';
 import Usuarios from './admin/usuarios';
 import ProductosAdmin from "./admin/ProductosAdmin.jsx";
+import CategoriasAdmin from "./admin/CategoriasAdmin.jsx";
 
 export default function App() {
 	const location = useLocation();
@@ -44,12 +45,9 @@ export default function App() {
 			<Route path="/noticia1" element={<MainLayout><Noticia1 /></MainLayout>} />
 			<Route path="/noticia2" element={<MainLayout><Noticia2 /></MainLayout>} />
 			<Route path="/Registro" element={<MainLayout><Registro /></MainLayout>} />
-			<Route path="/usuarios" element={
-				<AdminLayout>
-					<Usuarios />
-				</AdminLayout>
-			}/>
+			<Route path="/usuarios" element={<AdminLayout><Usuarios /></AdminLayout>}/>
 			<Route path="/productos-admin" element={<AdminLayout><ProductosAdmin /></AdminLayout>} />
+			<Route path="/categorias-admin" element={<AdminLayout><CategoriasAdmin /></AdminLayout>}/>
 			<Route path="*" element={<MainLayout><h2>404: Página no encontrada</h2></MainLayout>} />
 		</Routes>
 	);

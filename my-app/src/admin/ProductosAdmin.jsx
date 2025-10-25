@@ -6,6 +6,14 @@ function uid() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 }
 
+const toBase64 = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+
 export default function ProductosAdmin() {
   const [productos, setProductos] = useState([]);
   const [showCreate, setShowCreate] = useState(false);
@@ -18,7 +26,7 @@ export default function ProductosAdmin() {
     title: "",
     description: "",
     price: "",
-    image: "", // Ahora será la ruta de la imagen
+    image: "",
     qty: 0,
   });
 
@@ -118,11 +126,11 @@ export default function ProductosAdmin() {
   const topCaros = [...productos].sort((a, b) => b.price - a.price).slice(0, 5);
   const topBaratos = [...productos].sort((a, b) => a.price - b.price).slice(0, 5);
 
-  // Ahora manejamos solo la ruta de la imagen
-  const handleFileChange = (file) => {
+  // Funcion subir imagen
+  const handleFileChange = async (file) => {
     if (file) {
-      // Suponiendo que las imágenes se guardan en public/images/
-      setForm({ ...form, image: `/images/${file.name}` });
+      const base64 = await toBase64(file);
+      setForm({ ...form, image: base64 });
     }
   };
 
@@ -252,7 +260,7 @@ function ModalProducto({ title, form, setForm, onClose, onSubmit, handleFileChan
                 <input type="number" className="form-control" value={form.qty} onChange={(e) => setForm({ ...form, qty: e.target.value })} required />
               </div>
               <div className="mb-2">
-                <label className="form-label">Imagen (poner en public/images)</label>
+                <label className="form-label">Imagen</label>
                 <input type="file" className="form-control" accept="image/*" onChange={(e) => handleFileChange(e.target.files[0])} />
                 {form.image && <img src={form.image} alt="preview" style={{ width: 80, height: 80, marginTop: 5, objectFit: "cover" }} />}
               </div>
@@ -267,6 +275,8 @@ function ModalProducto({ title, form, setForm, onClose, onSubmit, handleFileChan
     </>
   );
 }
+
+// Modal para reportes :v
 function ModalSimple({ title, onClose, children }) {
   return (
     <>
@@ -288,3 +298,5 @@ function ModalSimple({ title, onClose, children }) {
     </>
   );
 }
+
+

@@ -11,7 +11,9 @@ const HeaderAdmin = () => (
       justifyContent: "space-between",
     }}
   >
-    <h2>Panel de Administración</h2>
+    <h2 style={{ color: "white", marginRight: "15px", textDecoration: "none" }}>
+      Panel de Administración
+    </h2>
     <nav>
       <Link to="/usuarios" style={{ color: "white", marginRight: "15px", textDecoration: "none" }}>
         Usuarios
@@ -22,6 +24,9 @@ const HeaderAdmin = () => (
       <Link to="/categorias-admin" style={{ color: "white", marginRight: "15px", textDecoration: "none" }}>
         Categorías
       </Link>
+      <Link to="/ordenes-admin" style={{ color: "white", marginRight: "15px", textDecoration: "none" }}>
+        Órdenes
+      </Link>
       <Link to="/" style={{ color: "white", textDecoration: "none" }}>
         Volver al inicio
       </Link>
@@ -30,5 +35,6 @@ const HeaderAdmin = () => (
 );
 
 export default HeaderAdmin;
+
 
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react"; 
 import { useNavigate, Link } from "react-router-dom";
 import "./styles/main.css";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -15,13 +15,27 @@ const readProductos = () => {
 
 export default function Carrito() {
   const navigate = useNavigate();
-  const [cart, setCart] = useState([]); 
+  const [cart, setCart] = useState([]);
   const [total, setTotal] = useState(0);
+  const [showModal, setShowModal] = useState(false);
+  const [errorModal, setErrorModal] = useState(false);
+  const [successModal, setSuccessModal] = useState(false); // nuevo modal de confirmación
+  const [cliente, setCliente] = useState({
+    nombre: "",
+    apellido: "",
+    correo: "",
+    calle: "",
+    departamento: "",
+    region: "",
+    comuna: "",
+    indicaciones: "",
+    pago: 0,
+  });
 
-  // Formatear precios
+  const productos = readProductos();
   const formatCurrency = (n) => "$" + Number(n).toLocaleString("es-CL");
 
-  // Leer carrito del localStorage
+  // Leer carrito
   const readCart = () => {
     try {
       const raw = localStorage.getItem("cart");
@@ -31,7 +45,6 @@ export default function Carrito() {
     }
   };
 
-  // Guardar carrito en localStorage
   const writeCart = (newCart) => {
     localStorage.setItem("cart", JSON.stringify(newCart));
     const cnt = document.getElementById("contador");
@@ -39,7 +52,6 @@ export default function Carrito() {
     setCart(newCart);
   };
 
-  // Inicializar carrito
   useEffect(() => {
     setCart(readCart());
     const onStorage = (e) => {
@@ -49,9 +61,7 @@ export default function Carrito() {
     return () => window.removeEventListener("storage", onStorage);
   }, []);
 
-  // Calcular total
   useEffect(() => {
-    const productos = readProductos();
     let acc = 0;
     cart.forEach((item) => {
       const prod = productos.find((p) => p.id === item.id);
@@ -60,23 +70,65 @@ export default function Carrito() {
     setTotal(acc);
   }, [cart]);
 
-  // Cambiar cantidad
   const changeQty = (id, qty) => {
     qty = Math.max(1, Number(qty) || 1);
     const newCart = cart.map((c) => (c.id === id ? { ...c, qty } : c));
     writeCart(newCart);
   };
 
-  // Eliminar producto
   const removeFromCart = (id) => {
     const newCart = cart.filter((c) => c.id !== id);
     writeCart(newCart);
   };
 
-  // Vaciar carrito
   const clearCart = () => writeCart([]);
 
-  const productos = readProductos(); // Productos actualizados
+  const handlePago = (e) => {
+    e.preventDefault();
+
+    // Validar monto exacto
+    if (Number(cliente.pago) !== total) {
+      setErrorModal(true);
+      return;
+    }
+
+    const nuevaOrden = {
+      id: Date.now(),
+      fecha: new Date().toISOString(),
+      cliente: { ...cliente },
+      productos: cart.map((item) => {
+        const prod = productos.find((p) => p.id === item.id);
+        return {
+          id: item.id,
+          title: prod.title,
+          qty: item.qty,
+          price: prod.price,
+        };
+      }),
+      total,
+    };
+
+    const ordenesPrevias = JSON.parse(localStorage.getItem("ordenes")) || [];
+    localStorage.setItem(
+      "ordenes",
+      JSON.stringify([nuevaOrden, ...ordenesPrevias])
+    );
+
+    setShowModal(false);
+    setSuccessModal(true); // mostrar confirmación
+    clearCart();
+    setCliente({
+      nombre: "",
+      apellido: "",
+      correo: "",
+      calle: "",
+      departamento: "",
+      region: "",
+      comuna: "",
+      indicaciones: "",
+      pago: 0,
+    });
+  };
 
   return (
     <div id="page-wrapper" className="is-preload homepage">
@@ -98,7 +150,7 @@ export default function Carrito() {
                   return (
                     <div
                       key={item.id}
-                      className="list-group-item d-flex justify-content-between align-items-center"
+                      className="list-group-item d-flex justify-content-between align-items-center flex-wrap"
                     >
                       <div className="d-flex align-items-center">
                         <img
@@ -119,7 +171,7 @@ export default function Carrito() {
                         </div>
                       </div>
 
-                      <div className="d-flex align-items-center">
+                      <div className="d-flex align-items-center mt-2 mt-md-0">
                         <input
                           type="number"
                           className="form-control"
@@ -150,26 +202,24 @@ export default function Carrito() {
               )}
             </div>
 
-            <div className="d-flex justify-content-between align-items-center">
+            <div className="mb-3">
               <h4>
                 Total: <span id="cart-total">{formatCurrency(total)}</span>
               </h4>
-              <div>
-                <button
-                  id="clear-cart"
-                  className="btn btn-secondary"
-                  onClick={clearCart}
-                >
-                  Vaciar carrito
-                </button>
-                <button
-                  id="checkout"
-                  className="btn btn-primary ml-2"
-                  onClick={() => alert("Proceder al pago (demo)")}
-                >
-                  Pagar
-                </button>
-              </div>
+              <button
+                className="btn btn-secondary w-100 mt-2 mb-2"
+                onClick={clearCart}
+                disabled={cart.length === 0}
+              >
+                Vaciar Carrito
+              </button>
+              <button
+                className="btn btn-primary w-100 mt-2"
+                onClick={() => setShowModal(true)}
+                disabled={cart.length === 0}
+              >
+                Pagar
+              </button>
             </div>
 
             <div style={{ marginTop: 16 }}>
@@ -186,8 +236,238 @@ export default function Carrito() {
           </div>
         </div>
       </div>
+
+      {/* Modal de pago */}
+      {showModal && (
+        <div
+          className="modal show d-block"
+          tabIndex="-1"
+          style={{ backgroundColor: "rgba(0,0,0,0.5)", overflowY: "auto" }}
+        >
+          <div className="modal-dialog modal-dialog-scrollable modal-lg">
+            <form className="modal-content" onSubmit={handlePago}>
+              <div className="modal-header">
+                <h5 className="modal-title">Datos para el pago</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setShowModal(false)}
+                />
+              </div>
+              <div className="modal-body">
+                <h6>Productos en el carrito:</h6>
+                <ul>
+                  {cart.map((item) => {
+                    const prod = productos.find((p) => p.id === item.id);
+                    if (!prod) return null;
+                    return (
+                      <li key={item.id}>
+                        {prod.title} - {item.qty} x {formatCurrency(prod.price)}
+                      </li>
+                    );
+                  })}
+                </ul>
+
+                <h6 className="mt-2">Total a pagar: {formatCurrency(total)}</h6>
+
+                <h6 className="mt-3">Datos del cliente:</h6>
+                <div className="row">
+                  <div className="col-md-6 mb-2">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Nombre"
+                      value={cliente.nombre}
+                      onChange={(e) =>
+                        setCliente({ ...cliente, nombre: e.target.value })
+                      }
+                      required
+                    />
+                  </div>
+                  <div className="col-md-6 mb-2">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Apellido"
+                      value={cliente.apellido}
+                      onChange={(e) =>
+                        setCliente({ ...cliente, apellido: e.target.value })
+                      }
+                      required
+                    />
+                  </div>
+                  <div className="col-md-12 mb-2">
+                    <input
+                      type="email"
+                      className="form-control"
+                      placeholder="Correo"
+                      value={cliente.correo}
+                      onChange={(e) =>
+                        setCliente({ ...cliente, correo: e.target.value })
+                      }
+                      required
+                    />
+                  </div>
+                  <div className="col-md-12 mb-2">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Calle"
+                      value={cliente.calle}
+                      onChange={(e) =>
+                        setCliente({ ...cliente, calle: e.target.value })
+                      }
+                      required
+                    />
+                  </div>
+                  <div className="col-md-6 mb-2">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Departamento"
+                      value={cliente.departamento}
+                      onChange={(e) =>
+                        setCliente({ ...cliente, departamento: e.target.value })
+                      }
+                    />
+                  </div>
+                  <div className="col-md-6 mb-2">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Región"
+                      value={cliente.region}
+                      onChange={(e) =>
+                        setCliente({ ...cliente, region: e.target.value })
+                      }
+                      required
+                    />
+                  </div>
+                  <div className="col-md-6 mb-2">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Comuna"
+                      value={cliente.comuna}
+                      onChange={(e) =>
+                        setCliente({ ...cliente, comuna: e.target.value })
+                      }
+                      required
+                    />
+                  </div>
+                  <div className="col-md-6 mb-2">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Indicaciones"
+                      value={cliente.indicaciones}
+                      onChange={(e) =>
+                        setCliente({ ...cliente, indicaciones: e.target.value })
+                      }
+                    />
+                  </div>
+                  <div className="col-md-12 mb-2">
+                    <input
+                      type="number"
+                      className="form-control"
+                      placeholder="Monto ingresado"
+                      value={cliente.pago}
+                      onChange={(e) =>
+                        setCliente({ ...cliente, pago: e.target.value })
+                      }
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setShowModal(false)}
+                >
+                  Cancelar
+                </button>
+                <button type="submit" className="btn btn-primary">
+                  Confirmar Pago
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de error */}
+      {errorModal && (
+        <div
+          className="modal show d-block"
+          tabIndex="-1"
+          style={{ backgroundColor: "rgba(0,0,0,0.5)", overflowY: "auto" }}
+        >
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Error</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setErrorModal(false)}
+                />
+              </div>
+              <div className="modal-body">
+                <p>
+                  El monto ingresado no coincide con el total a pagar:{" "}
+                  {formatCurrency(total)}
+                </p>
+              </div>
+              <div className="modal-footer">
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => setErrorModal(false)}
+                >
+                  Cerrar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de éxito */}
+      {successModal && (
+        <div
+          className="modal show d-block"
+          tabIndex="-1"
+          style={{ backgroundColor: "rgba(0,0,0,0.5)", overflowY: "auto" }}
+        >
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Pago exitoso</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setSuccessModal(false)}
+                />
+              </div>
+              <div className="modal-body">
+                <p>Su pago fue confirmado. ¡Gracias por su compra!</p>
+              </div>
+              <div className="modal-footer">
+                <button
+                  className="btn btn-primary"
+                  onClick={() => setSuccessModal(false)}
+                >
+                  Cerrar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
 
 

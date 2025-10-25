@@ -38,7 +38,7 @@ export default function Dashboard() {
     { to: "/productos-admin", label: "Productos", emoji: "🎮" },
     { to: "/categorias-admin", label: "Categorías", emoji: "🏷️" },
     { to: "/usuarios", label: "Usuarios", emoji: "👥" },
-    { to: "/reportes-admin", label: "Reportes", emoji: "📊" },
+    { to: "/reportes", label: "Reportes", emoji: "📊" },
     { to: "/perfil-admin", label: "Perfil", emoji: "👤" },
     { to: "/", label: "Volver a la Tienda", emoji: "🏪" },
   ];

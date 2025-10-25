@@ -24,9 +24,24 @@ const Contacto = () => {
         );
 
         if (valid) {
+            // Crear objeto de contacto
+            const nuevoContacto = {
+                nombre,
+                email,
+                texto,
+                fecha: new Date().toISOString()
+            };
+
+            // Guardar en localStorage
+            const contactosGuardados = JSON.parse(localStorage.getItem("contactos") || "[]");
+            contactosGuardados.push(nuevoContacto);
+            localStorage.setItem("contactos", JSON.stringify(contactosGuardados));
+
+            // Limpiar campos y mostrar mensaje
             setNombre('');
             setEmail('');
             setTexto('');
+            setEnviado('Mensaje enviado correctamente.');
         }
     };
 

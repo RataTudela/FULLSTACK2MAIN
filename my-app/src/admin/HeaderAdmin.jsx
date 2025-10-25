@@ -30,6 +30,9 @@ const HeaderAdmin = () => (
       <Link to="/ordenes-admin" style={{ color: "white", marginRight: "15px", textDecoration: "none" }}>
         Órdenes
       </Link>
+      <Link to="/reportes" style={{ color: "white", marginRight: "15px", textDecoration: "none" }}>
+        Reportes
+      </Link>
       <Link to="/" style={{ color: "white", textDecoration: "none" }}>
         Volver al inicio
       </Link>

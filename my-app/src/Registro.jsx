@@ -65,36 +65,36 @@ export default function Registro() {
         <h2>Registrarse</h2>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label>Nombre Completo</label>
-            <input type="text" className="form-control" value={nombre} onChange={e => setNombre(e.target.value)} />
+            <label htmlFor="nombre">Nombre Completo</label>
+            <input id="nombre" type="text" className="form-control" value={nombre} onChange={e => setNombre(e.target.value)} />
             {nombreError && <div className="fore-text">{nombreError}</div>}
           </div>
           <div className="form-group">
-            <label>Correo</label>
-            <input type="email" className="form-control" value={email} onChange={e => setEmail(e.target.value)} />
+            <label htmlFor="email">Correo</label>
+            <input id="email" type="email" className="form-control" value={email} onChange={e => setEmail(e.target.value)} />
             {emailError && <div className="fore-text">{emailError}</div>}
           </div>
           <div className="form-group">
-            <label>Contraseña</label>
-            <input type="password" className="form-control" value={contraseña} onChange={e => setContraseña(e.target.value)} />
+            <label htmlFor="contraseña">Contraseña</label>
+            <input id="contraseña" type="password" className="form-control" value={contraseña} onChange={e => setContraseña(e.target.value)} />
             {contraseñaError && <div className="fore-text">{contraseñaError}</div>}
           </div>
           <div className="form-group">
-            <label>Confirmar Contraseña</label>
-            <input type="password" className="form-control" value={confirmarContraseña} onChange={e => setConfirmarContraseña(e.target.value)} />
+            <label htmlFor="confirmarContraseña">Confirmar Contraseña</label>
+            <input id="confirmarContraseña" type="password" className="form-control" value={confirmarContraseña} onChange={e => setConfirmarContraseña(e.target.value)} />
             {confirmarContraseñaError && <div className="fore-text">{confirmarContraseñaError}</div>}
           </div>
           <div className="form-group">
-            <label>Teléfono</label>
-            <input type="text" className="form-control" value={telefono} onChange={e => setTelefono(e.target.value)} />
+            <label htmlFor="telefono">Teléfono</label>
+            <input id="telefono" type="text" className="form-control" value={telefono} onChange={e => setTelefono(e.target.value)} />
           </div>
           <div className="form-group">
-            <label>Región</label>
-            <input type="text" className="form-control" value={region} onChange={e => setRegion(e.target.value)} />
+            <label htmlFor="region">Región</label>
+            <input id="region" type="text" className="form-control" value={region} onChange={e => setRegion(e.target.value)} />
           </div>
           <div className="form-group">
-            <label>Comuna</label>
-            <input type="text" className="form-control" value={comuna} onChange={e => setComuna(e.target.value)} />
+            <label htmlFor="comuna">Comuna</label>
+            <input id="comuna" type="text" className="form-control" value={comuna} onChange={e => setComuna(e.target.value)} />
           </div>
           <button type="submit" className="btn btn-primary">Registrarse</button>
           {registroExitoso && <div className="success-text">{registroExitoso}</div>}

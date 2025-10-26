@@ -1,0 +1,235 @@
+{
+    "numTotalTestSuites": 14,
+    "numPassedTestSuites": 14,
+    "numFailedTestSuites": 0,
+    "numPendingTestSuites": 0,
+    "numTotalTests": 11,
+    "numPassedTests": 11,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "snapshot": {
+        "added": 0,
+        "failure": false,
+        "filesAdded": 0,
+        "filesRemoved": 0,
+        "filesRemovedList": [],
+        "filesUnmatched": 0,
+        "filesUpdated": 0,
+        "matched": 0,
+        "total": 0,
+        "unchecked": 0,
+        "uncheckedKeysByFile": [],
+        "unmatched": 0,
+        "updated": 0,
+        "didUpdate": false
+    },
+    "startTime": 1761506713711,
+    "success": true,
+    "testResults": [
+        {
+            "assertionResults": [
+                {
+                    "ancestorTitles": [],
+                    "fullName": "Verifica la existencia de botones Ver Caso y que se muestren la noticias",
+                    "status": "passed",
+                    "title": "Verifica la existencia de botones Ver Caso y que se muestren la noticias",
+                    "duration": 155.48559999999975,
+                    "failureMessages": [],
+                    "meta": {}
+                }
+            ],
+            "startTime": 1761506715662,
+            "endTime": 1761506715817.4856,
+            "status": "passed",
+            "message": "",
+            "name": "C:/Users/Benjamón/Downloads/FULLSTACK2MAIN/my-app/__test__/Blog.test.jsx"
+        },
+        {
+            "assertionResults": [
+                {
+                    "ancestorTitles": [],
+                    "fullName": "muestra el texto del botón correctamente",
+                    "status": "passed",
+                    "title": "muestra el texto del botón correctamente",
+                    "duration": 17.971399999999903,
+                    "failureMessages": [],
+                    "meta": {}
+                }
+            ],
+            "startTime": 1761506716952,
+            "endTime": 1761506716969.9714,
+            "status": "passed",
+            "message": "",
+            "name": "C:/Users/Benjamón/Downloads/FULLSTACK2MAIN/my-app/__test__/Button.test.jsx"
+        },
+        {
+            "assertionResults": [
+                {
+                    "ancestorTitles": [],
+                    "fullName": "muestra mensaje de carrito vacío",
+                    "status": "passed",
+                    "title": "muestra mensaje de carrito vacío",
+                    "duration": 57.203700000000026,
+                    "failureMessages": [],
+                    "meta": {}
+                }
+            ],
+            "startTime": 1761506715663,
+            "endTime": 1761506715720.2036,
+            "status": "passed",
+            "message": "",
+            "name": "C:/Users/Benjamón/Downloads/FULLSTACK2MAIN/my-app/__test__/Carrito.test.jsx"
+        },
+        {
+            "assertionResults": [
+                {
+                    "ancestorTitles": [],
+                    "fullName": "envia un mensaje y lo guarda en localStoragem, ademas de verificar que el correo termine en @duocuc.cl",
+                    "status": "passed",
+                    "title": "envia un mensaje y lo guarda en localStoragem, ademas de verificar que el correo termine en @duocuc.cl",
+                    "duration": 88.73210000000017,
+                    "failureMessages": [],
+                    "meta": {}
+                }
+            ],
+            "startTime": 1761506715548,
+            "endTime": 1761506715636.7322,
+            "status": "passed",
+            "message": "",
+            "name": "C:/Users/Benjamón/Downloads/FULLSTACK2MAIN/my-app/__test__/Contacto.test.jsx"
+        },
+        {
+            "assertionResults": [
+                {
+                    "ancestorTitles": [],
+                    "fullName": "renderiza el detalle del producto usando id page-wrapper",
+                    "status": "passed",
+                    "title": "renderiza el detalle del producto usando id page-wrapper",
+                    "duration": 53.780300000000125,
+                    "failureMessages": [],
+                    "meta": {}
+                }
+            ],
+            "startTime": 1761506716955,
+            "endTime": 1761506717008.7803,
+            "status": "passed",
+            "message": "",
+            "name": "C:/Users/Benjamón/Downloads/FULLSTACK2MAIN/my-app/__test__/DetalleProducto.test.jsx"
+        },
+        {
+            "assertionResults": [
+                {
+                    "ancestorTitles": [],
+                    "fullName": "botón \"Ir a productos\" llama a navigate con \"/productos\"",
+                    "status": "passed",
+                    "title": "botón \"Ir a productos\" llama a navigate con \"/productos\"",
+                    "duration": 156.31639999999993,
+                    "failureMessages": [],
+                    "meta": {}
+                }
+            ],
+            "startTime": 1761506715666,
+            "endTime": 1761506715822.3164,
+            "status": "passed",
+            "message": "",
+            "name": "C:/Users/Benjamón/Downloads/FULLSTACK2MAIN/my-app/__test__/Home.test.jsx"
+        },
+        {
+            "assertionResults": [
+                {
+                    "ancestorTitles": [],
+                    "fullName": "cambiar el estado de los inputs al escribir",
+                    "status": "passed",
+                    "title": "cambiar el estado de los inputs al escribir",
+                    "duration": 38.356700000000046,
+                    "failureMessages": [],
+                    "meta": {}
+                }
+            ],
+            "startTime": 1761506717004,
+            "endTime": 1761506717042.3567,
+            "status": "passed",
+            "message": "",
+            "name": "C:/Users/Benjamón/Downloads/FULLSTACK2MAIN/my-app/__test__/InicioSesion.test.jsx"
+        },
+        {
+            "assertionResults": [
+                {
+                    "ancestorTitles": [
+                        "Componente Noticia"
+                    ],
+                    "fullName": "Componente Noticia muestra titulo, descripcion, imagen y boton de volver al blog de la noticia 1",
+                    "status": "passed",
+                    "title": "muestra titulo, descripcion, imagen y boton de volver al blog de la noticia 1",
+                    "duration": 154.13599999999997,
+                    "failureMessages": [],
+                    "meta": {}
+                }
+            ],
+            "startTime": 1761506715660,
+            "endTime": 1761506715814.136,
+            "status": "passed",
+            "message": "",
+            "name": "C:/Users/Benjamón/Downloads/FULLSTACK2MAIN/my-app/__test__/noticia1.test.jsx"
+        },
+        {
+            "assertionResults": [
+                {
+                    "ancestorTitles": [
+                        "Componente Noticia"
+                    ],
+                    "fullName": "Componente Noticia muestra titulo, descripcion, imagen y boton de volver al blog de la noticia 2",
+                    "status": "passed",
+                    "title": "muestra titulo, descripcion, imagen y boton de volver al blog de la noticia 2",
+                    "duration": 133.1422,
+                    "failureMessages": [],
+                    "meta": {}
+                }
+            ],
+            "startTime": 1761506715662,
+            "endTime": 1761506715795.142,
+            "status": "passed",
+            "message": "",
+            "name": "C:/Users/Benjamón/Downloads/FULLSTACK2MAIN/my-app/__test__/noticia2.test.jsx"
+        },
+        {
+            "assertionResults": [
+                {
+                    "ancestorTitles": [
+                        "Componente Productos"
+                    ],
+                    "fullName": "Componente Productos renderiza productos y categorías",
+                    "status": "passed",
+                    "title": "renderiza productos y categorías",
+                    "duration": 326.9218999999998,
+                    "failureMessages": [],
+                    "meta": {}
+                }
+            ],
+            "startTime": 1761506715671,
+            "endTime": 1761506715997.9219,
+            "status": "passed",
+            "message": "",
+            "name": "C:/Users/Benjamón/Downloads/FULLSTACK2MAIN/my-app/__test__/Productos.test.jsx"
+        },
+        {
+            "assertionResults": [
+                {
+                    "ancestorTitles": [],
+                    "fullName": "Cambiar estado inputs al rellenarlos",
+                    "status": "passed",
+                    "title": "Cambiar estado inputs al rellenarlos",
+                    "duration": 71.1132,
+                    "failureMessages": [],
+                    "meta": {}
+                }
+            ],
+            "startTime": 1761506715666,
+            "endTime": 1761506715737.1133,
+            "status": "passed",
+            "message": "",
+            "name": "C:/Users/Benjamón/Downloads/FULLSTACK2MAIN/my-app/__test__/Registro.test.jsx"
+        }
+    ]
+}

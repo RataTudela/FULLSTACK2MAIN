@@ -1,15 +1,15 @@
 const reportesData = [
     {
-        nombre: "Juan Pérez",
-        email: "juan.perez@example.com",
+        nombre: "Juan Perez",
+        email: "juan@gmail.com",
         texto: "Hola, Los Odio.",
-        fecha: "2025-10-25T10:00:00.000Z"
+        fecha: "2025-10-25"
     },
     {
-        nombre: "María González",
-        email: "maria.gonzalez@example.com",
+        nombre: "Maria Gonzalez",
+        email: "maria@duocuc.cl",
         texto: "Excelente servicio, muchas gracias.",
-        fecha: "2025-10-24T15:30:00.000Z"
+        fecha: "2025-10-24"
     }
 ];
 

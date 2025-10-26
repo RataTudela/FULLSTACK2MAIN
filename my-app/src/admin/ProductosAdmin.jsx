@@ -150,7 +150,7 @@ export default function ProductosAdmin() {
           <button className="btn btn-primary me-2" onClick={() => setShowCreate(true)}>Nuevo Producto</button>
           <button className="btn btn-danger me-2" onClick={() => setShowCritical(true)}>Productos Críticos</button>
           <button className="btn btn-info me-2" onClick={() => setShowReport(true)}>Ver Reporte</button>
-          <button className="btn btn-secondary" onClick={handleReset}>Reset Ejemplo</button>
+          <button className="btn btn-secondary" onClick={handleReset}>Reset</button>
         </div>
       </div>
 
@@ -238,7 +238,7 @@ export default function ProductosAdmin() {
   );
 }
 
-// Modal Producto con scroll para pantallas pequeñas
+// Modal Producto
 function ModalProducto({ title, form, setForm, categorias, onClose, onSubmit, handleFileChange }) {
   return (
     <>

@@ -16,6 +16,7 @@ export default function Usuarios() {
   const [form, setForm] = useState({
     nombre: "",
     email: "",
+    contraseña: "",
     telefono: "",
     region: "",
     comuna: "",
@@ -43,11 +44,11 @@ export default function Usuarios() {
   const formatCurrency = (n) => "$" + Number(n).toLocaleString("es-CL");
 
   const resetForm = () =>
-    setForm({ nombre: "", email: "", telefono: "", region: "", comuna: "" });
+    setForm({ nombre: "", email: "", contraseña: "", telefono: "", region: "", comuna: "" });
 
   const handleCreate = (e) => {
     e.preventDefault();
-    if (!form.nombre || !form.email) return;
+    if (!form.nombre || !form.email || !form.contraseña) return;
     const newUser = { ...form, id: uid(), compras: [] };
     setUsers((s) => [newUser, ...s]);
     resetForm();
@@ -59,6 +60,7 @@ export default function Usuarios() {
     setForm({
       nombre: user.nombre || "",
       email: user.email || "",
+      contraseña: user.contraseña || "",
       telefono: user.telefono || "",
       region: user.region || "",
       comuna: user.comuna || "",
@@ -109,17 +111,6 @@ export default function Usuarios() {
           <button className="btn btn-primary me-2" onClick={() => setShowCreate(true)}>
             Nuevo Usuario
           </button>
-          <button
-            className="btn btn-secondary"
-            onClick={() => {
-              localStorage.removeItem("app_users");
-              setUsers(sampleUsers);
-              localStorage.setItem("app_users", JSON.stringify(sampleUsers));
-            }}
-            title="Restablecer datos de ejemplo"
-          >
-            Reset ejemplo
-          </button>
         </div>
       </div>
 
@@ -149,15 +140,9 @@ export default function Usuarios() {
                 <td>{u.region} / {u.comuna}</td>
                 <td>{(u.compras || []).length}</td>
                 <td className="text-end">
-                  <button className="btn btn-sm btn-info me-2" onClick={() => openHistory(u)}>
-                    Historial
-                  </button>
-                  <button className="btn btn-sm btn-warning me-2" onClick={() => openEdit(u)}>
-                    Editar
-                  </button>
-                  <button className="btn btn-sm btn-danger" onClick={() => handleDelete(u.id)}>
-                    Eliminar
-                  </button>
+                  <button className="btn btn-sm btn-info me-2" onClick={() => openHistory(u)}>Historial</button>
+                  <button className="btn btn-sm btn-warning me-2" onClick={() => openEdit(u)}>Editar</button>
+                  <button className="btn btn-sm btn-danger" onClick={() => handleDelete(u.id)}>Eliminar</button>
                 </td>
               </tr>
             ))}
@@ -165,7 +150,7 @@ export default function Usuarios() {
         </table>
       </div>
 
-      {/* Create Modal */}
+      {/*Modal Crear Usuario*/}
       {showCreate && (
         <>
           <div className="modal-backdrop fade show" />
@@ -186,8 +171,12 @@ export default function Usuarios() {
                     <input type="email" className="form-control" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
                   </div>
                   <div className="mb-2">
+                    <label className="form-label">Contraseña</label>
+                    <input type="password" className="form-control" value={form.contraseña} onChange={(e) => setForm({ ...form, contraseña: e.target.value })} required />
+                  </div>
+                  <div className="mb-2">
                     <label className="form-label">Teléfono</label>
-                    <input className="form-control" value={form.telefono} onChange={(e) => setForm({ ...form, telefono: e.target.value })} />
+                    <input type="text" className="form-control" value={form.telefono} onChange={(e) => setForm({ ...form, telefono: e.target.value })} />
                   </div>
                   <div className="row">
                     <div className="col">
@@ -210,63 +199,56 @@ export default function Usuarios() {
         </>
       )}
 
-      {/* Edit Modal */}
-      {showEdit && selected && (
-        <>
-          <div className="modal-backdrop fade show" />
-          <div className="modal d-block" tabIndex="-1" role="dialog">
-            <div className="modal-dialog" role="document">
-              <form className="modal-content" onSubmit={handleEdit}>
-                <div className="modal-header">
-                  <h5 className="modal-title">Editar Usuario</h5>
-                  <button type="button" className="btn-close" onClick={() => { setShowEdit(false); setSelected(null); resetForm(); }} />
-                </div>
-                <div className="modal-body">
-                  <div className="mb-2">
-                    <label className="form-label">Nombre</label>
-                    <input className="form-control" value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} required />
-                  </div>
-                  <div className="mb-2">
-                    <label className="form-label">Email</label>
-                    <input type="email" className="form-control" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
-                  </div>
-                  <div className="mb-2">
-                    <label className="form-label">Teléfono</label>
-                    <input className="form-control" value={form.telefono} onChange={(e) => setForm({ ...form, telefono: e.target.value })} />
-                  </div>
-                  <div className="row">
-                    <div className="col">
-                      <label className="form-label">Región</label>
-                      <input className="form-control" value={form.region} onChange={(e) => setForm({ ...form, region: e.target.value })} />
-                    </div>
-                    <div className="col">
-                      <label className="form-label">Comuna</label>
-                      <input className="form-control" value={form.comuna} onChange={(e) => setForm({ ...form, comuna: e.target.value })} />
-                    </div>
-                  </div>
-
-                  <hr />
-                  <h6>Acciones rápidas</h6>
-                  <div className="d-flex gap-2">
-                    <button type="button" className="btn btn-outline-success" onClick={() => { addMockPurchase(selected.id); }}>
-                      Añadir compra demo
-                    </button>
-                    <button type="button" className="btn btn-outline-danger" onClick={() => { if (window.confirm("Eliminar todas las compras?")) { setUsers((s) => s.map(u => u.id === selected.id ? { ...u, compras: [] } : u)); } }}>
-                      Borrar historial
-                    </button>
-                  </div>
-                </div>
-                <div className="modal-footer">
-                  <button type="button" className="btn btn-secondary" onClick={() => { setShowEdit(false); setSelected(null); resetForm(); }}>Cerrar</button>
-                  <button type="submit" className="btn btn-primary">Guardar</button>
-                </div>
-              </form>
+     {/*Modal Edicion*/}
+{showEdit && selected && (
+  <>
+    <div className="modal-backdrop fade show" />
+    <div className="modal d-block" tabIndex="-1" role="dialog">
+      <div className="modal-dialog" role="document">
+        <form className="modal-content" onSubmit={handleEdit}>
+          <div className="modal-header">
+            <h5 className="modal-title">Editar Usuario</h5>
+            <button type="button" className="btn-close" onClick={() => { setShowEdit(false); setSelected(null); resetForm(); }} />
+          </div>
+          <div className="modal-body">
+            <div className="mb-2">
+              <label className="form-label">Nombre</label>
+              <input className="form-control" value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} required />
+            </div>
+            <div className="mb-2">
+              <label className="form-label">Email</label>
+              <input type="email" className="form-control" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
+            </div>
+            <div className="mb-2">
+              <label className="form-label">Contraseña</label>
+              <input type="password" className="form-control" value={form.contraseña} onChange={(e) => setForm({ ...form, contraseña: e.target.value })} required />
+            </div>
+            <div className="mb-2">
+              <label className="form-label">Teléfono</label>
+              <input type="text" className="form-control" value={form.telefono} onChange={(e) => setForm({ ...form, telefono: e.target.value })} />
+            </div>
+            <div className="row">
+              <div className="col">
+                <label className="form-label">Región</label>
+                <input className="form-control" value={form.region} onChange={(e) => setForm({ ...form, region: e.target.value })} />
+              </div>
+              <div className="col">
+                <label className="form-label">Comuna</label>
+                <input className="form-control" value={form.comuna} onChange={(e) => setForm({ ...form, comuna: e.target.value })} />
+              </div>
             </div>
           </div>
-        </>
-      )}
+          <div className="modal-footer">
+            <button type="button" className="btn btn-secondary" onClick={() => { setShowEdit(false); setSelected(null); resetForm(); }}>Cerrar</button>
+            <button type="submit" className="btn btn-primary">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    </>
+    )}
 
-      {/* History Modal */}
+      {/*Modal Historial*/}
       {showHistory && selected && (
         <>
           <div className="modal-backdrop fade show" />

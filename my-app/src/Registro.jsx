@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { validarRegistro } from "./utils/validaciones"; 
 import "./styles/CssRegistro.css";
 import "./styles/main.css";
 
@@ -19,163 +18,89 @@ export default function Registro() {
   const [emailError, setEmailError] = useState("");
   const [contraseñaError, setContraseñaError] = useState("");
   const [confirmarContraseñaError, setConfirmarContraseñaError] = useState("");
-  const [telefonoError, setTelefonoError] = useState("");
-  const [regionError, setRegionError] = useState("");
-  const [comunaError, setComunaError] = useState("");
   const [registroExitoso, setRegistroExitoso] = useState("");
 
   const handleSubmit = (event) => {
-    const valid = validarRegistro(
-      event,
+    event.preventDefault();
+
+    setNombreError(""); setEmailError(""); setContraseñaError(""); setConfirmarContraseñaError(""); setRegistroExitoso("");
+
+    if (!nombre) { setNombreError("Nombre requerido"); return; }
+    if (!email) { setEmailError("Correo requerido"); return; }
+    if (!contraseña) { setContraseñaError("Contraseña requerida"); return; }
+    if (contraseña !== confirmarContraseña) { setConfirmarContraseñaError("Las contraseñas no coinciden"); return; }
+
+    const usuariosGuardados = JSON.parse(localStorage.getItem("app_users")) || [];
+
+    if (usuariosGuardados.find(u => u.email === email)) {
+      setEmailError("El correo ya está registrado");
+      return;
+    }
+
+    const nuevoUsuario = {
+      id: Date.now().toString(36),
       nombre,
       email,
       contraseña,
-      confirmarContraseña,
       telefono,
       region,
       comuna,
-      setNombreError,
-      setEmailError,
-      setContraseñaError,
-      setConfirmarContraseñaError,
-      setTelefonoError,
-      setRegionError,
-      setComunaError,
-      setRegistroExitoso
-    );
+      compras: [],
+    };
 
-    if (valid) {
-      setNombre("");
-      setEmail("");
-      setContraseña("");
-      setConfirmarContraseña("");
-      setTelefono("");
-      setRegion("");
-      setComuna("");
+    localStorage.setItem("app_users", JSON.stringify([nuevoUsuario, ...usuariosGuardados]));
 
-      setTimeout(() => navigate("/inicio-sesion"), 1000);
-    }
+    setRegistroExitoso("Usuario registrado correctamente. Redirigiendo...");
+    setTimeout(() => navigate("/inicio-sesion"), 1000);
+
+    setNombre(""); setEmail(""); setContraseña(""); setConfirmarContraseña(""); setTelefono(""); setRegion(""); setComuna("");
   };
 
   return (
     <main className="img-fondo">
       <div className="login-box">
         <div>
-          <img src="src/images/Logo_de_GameCloud.png" alt="Logo de GameCloud" />
+          <img src="/images/Logo_de_GameCloud.png" alt="Logo de GameCloud" />
         </div>
         <h2>Registrarse</h2>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="nombre">Nombre Completo</label>
-            <input
-              type="text"
-              className="form-control"
-              id="nombre"
-              value={nombre}
-              onChange={(e) => setNombre(e.target.value)}
-            />
+            <label>Nombre Completo</label>
+            <input type="text" className="form-control" value={nombre} onChange={e => setNombre(e.target.value)} />
             {nombreError && <div className="fore-text">{nombreError}</div>}
           </div>
-
           <div className="form-group">
-            <label htmlFor="email">Correo</label>
-            <input
-              type="email"
-              className="form-control"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+            <label>Correo</label>
+            <input type="email" className="form-control" value={email} onChange={e => setEmail(e.target.value)} />
             {emailError && <div className="fore-text">{emailError}</div>}
           </div>
-
           <div className="form-group">
-            <label htmlFor="contraseña">Contraseña</label>
-            <input
-              type="password"
-              className="form-control"
-              id="contraseña"
-              value={contraseña}
-              onChange={(e) => setContraseña(e.target.value)}
-            />
+            <label>Contraseña</label>
+            <input type="password" className="form-control" value={contraseña} onChange={e => setContraseña(e.target.value)} />
             {contraseñaError && <div className="fore-text">{contraseñaError}</div>}
           </div>
-
           <div className="form-group">
-            <label htmlFor="confirmarContraseña">Confirmar Contraseña</label>
-            <input
-              type="password"
-              className="form-control"
-              id="confirmarContraseña"
-              value={confirmarContraseña}
-              onChange={(e) => setConfirmarContraseña(e.target.value)}
-            />
-            {confirmarContraseñaError && (
-              <div className="fore-text">{confirmarContraseñaError}</div>
-            )}
+            <label>Confirmar Contraseña</label>
+            <input type="password" className="form-control" value={confirmarContraseña} onChange={e => setConfirmarContraseña(e.target.value)} />
+            {confirmarContraseñaError && <div className="fore-text">{confirmarContraseñaError}</div>}
           </div>
-
           <div className="form-group">
-            <label htmlFor="telefono">Teléfono</label>
-            <input
-              type="number"
-              className="form-control"
-              id="telefono"
-              value={telefono}
-              onChange={(e) => setTelefono(e.target.value)}
-            />
-            {telefonoError && <div className="fore-text">{telefonoError}</div>}
+            <label>Teléfono</label>
+            <input type="text" className="form-control" value={telefono} onChange={e => setTelefono(e.target.value)} />
           </div>
-
           <div className="form-group">
-            <label htmlFor="region">Región</label>
-            <input
-              type="text"
-              className="form-control"
-              id="region"
-              value={region}
-              onChange={(e) => setRegion(e.target.value)}
-            />
-            {regionError && <div className="fore-text">{regionError}</div>}
+            <label>Región</label>
+            <input type="text" className="form-control" value={region} onChange={e => setRegion(e.target.value)} />
           </div>
-
           <div className="form-group">
-            <label htmlFor="comuna">Comuna</label>
-            <input
-              type="text"
-              className="form-control"
-              id="comuna"
-              value={comuna}
-              onChange={(e) => setComuna(e.target.value)}
-            />
-            {comunaError && <div className="fore-text">{comunaError}</div>}
+            <label>Comuna</label>
+            <input type="text" className="form-control" value={comuna} onChange={e => setComuna(e.target.value)} />
           </div>
-
-          <button type="submit" className="btn btn-primary">
-            Registrarse
-          </button>
-
-          {registroExitoso && (
-            <div className="success-text" style={{ marginTop: "10px", color: "green" }}>
-              {registroExitoso}
-            </div>
-          )}
-
-          <div>
-            <a
-              onClick={() => navigate("/inicio-sesion")}
-              style={{
-                cursor: "pointer",
-                textAlign: "center",
-                display: "block",
-                marginTop: "10px",
-              }}
-            >
-              ¿Ya tienes cuenta? Inicia sesión aquí
-            </a>
-          </div>
+          <button type="submit" className="btn btn-primary">Registrarse</button>
+          {registroExitoso && <div className="success-text">{registroExitoso}</div>}
         </form>
       </div>
     </main>
   );
 }
+

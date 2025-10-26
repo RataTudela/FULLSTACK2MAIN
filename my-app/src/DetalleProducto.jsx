@@ -117,7 +117,7 @@ export default function DetalleProducto() {
             <div className="cajilla-box">
               <img
                 id="imagen-principal"
-                src={product.imagen} // Ahora usa la ruta correcta
+                src={product.imagen} 
                 alt={product.nombre}
                 style={{ maxWidth: "100%", height: 310 }}
               />

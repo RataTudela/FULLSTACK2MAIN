@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';  
-import { validarCorreoYContraseña } from './utils/validaciones'; 
-import usuarios from './utils/usuariosEjemplo.js'; 
+import { useNavigate } from 'react-router-dom';
+import { validarCorreoYContraseña } from './utils/validaciones';
+import usuariosBase from './utils/usuariosEjemplo'; 
 import "./styles/CssInicioSesion.css";
 import "./styles/main.css";
 
@@ -10,7 +10,6 @@ export default function InicioSesion() {
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
-
   const navigate = useNavigate();
 
   const handleSubmit = (event) => {
@@ -24,23 +23,28 @@ export default function InicioSesion() {
 
     if (!valid) return;
 
-    const user = usuarios.find((u) => u.email === email);
+    const usuariosRegistrados = JSON.parse(localStorage.getItem("app_users")) || [];
+    const todosLosUsuarios = [...usuariosBase, ...usuariosRegistrados];
+
+    const user = todosLosUsuarios.find((u) => u.email === email);
 
     if (!user) {
       setEmailError("Correo no encontrado en la base de usuarios");
       return;
     }
 
-    // Guardar usuario en localStorage
+    if (user.contraseña !== password) {
+      setPasswordError("Contraseña incorrecta");
+      return;
+    }
+
     localStorage.setItem("usuarioActual", JSON.stringify(user));
 
-    // Redirigir según usuario
-    if (user.nombre === "María López") {
-      navigate("/"); // Home
-    } else if (user.nombre === "Juan Pérez") {
-      navigate("/usuarios"); // Panel de usuarios
+  
+    if (user.nombre === "Juan Perez") {
+      navigate("/dashboard"); 
     } else {
-      navigate("/"); // Por defecto
+      navigate("/"); 
     }
   };
 
@@ -48,7 +52,7 @@ export default function InicioSesion() {
     <div className="img-fondo">
       <div className="login-box">
         <div>
-          <img src="public/images/Logo_de_GameCloud.png" alt="Logo de GameCloud" />
+          <img src="/images/Logo_de_GameCloud.png" alt="Logo de GameCloud" />
         </div>
         <h2>Iniciar Sesión</h2>
         <form onSubmit={handleSubmit}>
@@ -59,7 +63,7 @@ export default function InicioSesion() {
               className="form-control"
               id="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)} 
+              onChange={(e) => setEmail(e.target.value)}
             />
             {emailError && <div className="fore-text">{emailError}</div>}
           </div>
@@ -71,29 +75,23 @@ export default function InicioSesion() {
               className="form-control"
               id="contraseña"
               value={password}
-              onChange={(e) => setPassword(e.target.value)} 
+              onChange={(e) => setPassword(e.target.value)}
             />
             {passwordError && <div className="fore-text">{passwordError}</div>}
           </div>
 
           <div className="form-group form-check">
-            <input
-              type="checkbox"
-              className="form-check-input"
-              id="exampleCheck1"
-            />
+            <input type="checkbox" className="form-check-input" id="exampleCheck1" />
             <label className="form-check-label" htmlFor="exampleCheck1">
               Acepto los términos y condiciones
             </label>
           </div>
 
-          <button type="submit" className="btn btn-primary">
-            Iniciar Sesión
-          </button>
+          <button type="submit" className="btn btn-primary">Iniciar Sesión</button>
 
           <div>
             <a
-              onClick={() => navigate('/Registro')}  
+              onClick={() => navigate('/Registro')}
               style={{ cursor: 'pointer', textAlign: 'center', display: 'block', marginTop: '10px' }}
             >
               ¿No tienes cuenta? Regístrate aquí

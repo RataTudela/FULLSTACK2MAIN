@@ -5,11 +5,13 @@ function uid() {
 const usuarios = [
   {
     id: uid(),
-    nombre: "Juan Pérez",
+    nombre: "Juan Perez",
     email: "juan@gmail.com",
+    contraseña: "admin123", 
     telefono: "912345678",
     region: "Metropolitana",
     comuna: "Santiago",
+    rol: "admin",
     compras: [
       { id: uid(), titulo: "Persona 3: Reload", price: 18500, fecha: "2025-10-01" },
       { id: uid(), titulo: "Elden Ring", price: 30000, fecha: "2025-10-12" },
@@ -17,12 +19,16 @@ const usuarios = [
   },
   {
     id: uid(),
-    nombre: "María López",
+    nombre: "Maria Lopez",
     email: "maria@duocuc.cl",
+    contraseña: "usuario123", 
     telefono: "987654321",
     region: "Valparaíso",
     comuna: "Valparaíso",
-    compras: [{ id: uid(), titulo: "SilkSong", price: 10500, fecha: "2025-09-21" }],
+    rol: "usuario",
+    compras: [
+      { id: uid(), titulo: "SilkSong", price: 10500, fecha: "2025-09-21" },
+    ],
   },
 ];
 
